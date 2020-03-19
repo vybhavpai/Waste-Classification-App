@@ -86,3 +86,7 @@ lint/tmp/
 # lint/reports/
 .idea
 .vscode
+
+Model/TRAIN/
+Model/X.pickle
+Model/y.pickle
