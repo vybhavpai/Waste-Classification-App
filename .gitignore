@@ -90,3 +90,4 @@ lint/tmp/
 Model/TRAIN/
 Model/X.pickle
 Model/y.pickle
+Model/logs/
