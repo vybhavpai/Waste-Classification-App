@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "658153954358",
+    "firebase_url": "https://waste-classifier-e9d77.firebaseio.com",
+    "project_id": "waste-classifier-e9d77",
+    "storage_bucket": "waste-classifier-e9d77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658153954358:android:f64f111432c9be97144c97",
+        "android_client_info": {
+          "package_name": "com.example.wasteclassification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658153954358-m66il7u8pg86lhjcdbs7vf71n1j4t0r4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD25mvXku7GVWGYo1bwZVPxmauMcdgMtEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658153954358-m66il7u8pg86lhjcdbs7vf71n1j4t0r4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
