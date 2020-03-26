@@ -30,6 +30,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private StorageTask<UploadTask.TaskSnapshot> mUploadTask;
     private Bitmap bp;
+    private String httpUrl, imageUrl;
 
     String ID = "";
     String Category = "";
@@ -80,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(MainActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    if(imageUri!=null){
+                    if (imageUri != null) {
                         uploadFile();
-                    } else if(bp!=null){
+                    } else if (bp != null) {
                         uploadImage(bp);
                     } else {
                         Toast.makeText(getApplicationContext(), "Please take photo to upload", Toast.LENGTH_LONG).show();
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadFile() {
         if (imageUri != null) {
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
             mUploadTask = fileReference.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -147,9 +150,20 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 500);
                             Toast.makeText(MainActivity.this, "Upload successful", Toast.LENGTH_LONG).show();
-                            String uploadId = mDatabaseRef.push().getKey();
-                            UploadImage uploadImage = new UploadImage(uploadId, "", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            final String uploadId = mDatabaseRef.push().getKey();
+                            imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                            final UploadImage uploadImage = new UploadImage(uploadId, "", imageUrl);
                             mDatabaseRef.child(uploadId).setValue(uploadImage);
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    httpUrl = uri.toString();
+                                    System.out.println(mDatabaseRef.child(uploadId));
+                                    Map<String, Object> updates = new HashMap<>();
+                                    updates.put("mImageUrl", httpUrl);
+                                    FirebaseDatabase.getInstance().getReference("Classification").child(uploadId).updateChildren(updates);
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -175,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] data = baos.toByteArray();
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." + "png");
+            final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." + "png");
             mUploadTask = fileReference.putBytes(data)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -188,9 +202,20 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 500);
                             Toast.makeText(MainActivity.this, "Image Upload successful", Toast.LENGTH_LONG).show();
-                            String uploadId = mDatabaseRef.push().getKey();
-                            UploadImage uploadImage = new UploadImage(uploadId, "", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            final String uploadId = mDatabaseRef.push().getKey();
+                            imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                            UploadImage uploadImage = new UploadImage(uploadId, "", imageUrl);
                             mDatabaseRef.child(uploadId).setValue(uploadImage);
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    httpUrl = uri.toString();
+                                    System.out.println(mDatabaseRef.child(uploadId));
+                                    Map<String, Object> updates = new HashMap<>();
+                                    updates.put("mImageUrl", httpUrl);
+                                    FirebaseDatabase.getInstance().getReference("Classification").child(uploadId).updateChildren(updates);
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
