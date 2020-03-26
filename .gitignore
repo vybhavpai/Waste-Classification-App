@@ -85,3 +85,8 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+WasteClassification/.idea/
+Model/TRAIN/
+Model/X.pickle
+Model/y.pickle
+Model/logs/
