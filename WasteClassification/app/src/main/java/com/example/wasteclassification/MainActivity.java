@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri imageUri;
     private ProgressBar mProgressBar;
     private StorageTask<UploadTask.TaskSnapshot> mUploadTask;
+    private Bitmap bp;
 
     String ID = "";
     String Category = "";
@@ -78,7 +80,14 @@ public class MainActivity extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(MainActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    uploadFile();
+                    if(imageUri!=null){
+                        uploadFile();
+                    } else if(bp!=null){
+                        uploadImage(bp);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please take photo to upload", Toast.LENGTH_LONG).show();
+                    }
+
                 }
             }
         });
@@ -89,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Image_Capture_Code) {
             if (resultCode == RESULT_OK) {
-                Bitmap bp = (Bitmap) data.getExtras().get("data");
+                bp = (Bitmap) data.getExtras().get("data");
                 imgCapture.setImageBitmap(bp);
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
@@ -138,6 +147,47 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 500);
                             Toast.makeText(MainActivity.this, "Upload successful", Toast.LENGTH_LONG).show();
+                            String uploadId = mDatabaseRef.push().getKey();
+                            UploadImage uploadImage = new UploadImage(uploadId, "", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            mDatabaseRef.child(uploadId).setValue(uploadImage);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            mProgressBar.setProgress((int) progress);
+                        }
+                    });
+        } else {
+            Toast.makeText(MainActivity.this, "Select image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadImage(Bitmap bitmap) {
+        if (bitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] data = baos.toByteArray();
+            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." + "png");
+            mUploadTask = fileReference.putBytes(data)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBar.setProgress(0);
+                                }
+                            }, 500);
+                            Toast.makeText(MainActivity.this, "Image Upload successful", Toast.LENGTH_LONG).show();
                             String uploadId = mDatabaseRef.push().getKey();
                             UploadImage uploadImage = new UploadImage(uploadId, "", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
                             mDatabaseRef.child(uploadId).setValue(uploadImage);
