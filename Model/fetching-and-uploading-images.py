@@ -30,5 +30,5 @@ import os
 
 # download an image
 
-path_on_cloud = "<path-of-the-image-in-firebase-storage>"
+path_on_cloud = "images/1585200176641.png"
 storage.child(path_on_cloud).download("classify-waste.jpg")
