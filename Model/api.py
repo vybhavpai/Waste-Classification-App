@@ -36,7 +36,7 @@ firebase = firebase.FirebaseApplication(
     'https://waste-classifier-e9d77.firebaseio.com/', None)
 
 
-def foo():
+def fetchImages():
     print(time.ctime())
 
     # fetch items
@@ -53,25 +53,26 @@ def foo():
             if b:
                 urllib.request.urlretrieve(
                     v['mImageUrl'], v['mID']+"-waste.jpg")
-                predict(v['mID']+"-waste.jpg")
+                predict(v['mID']+"-waste.jpg", v['mID'])
             else:
                 urllib.request.urlretrieve(
                     v['mImageUrl'], v['mID']+"-waste.png")
-                predict(v['mID']+"-waste.png")
-            # storage.child('images/1585200795477.png').download('waste.png')
+                predict(v['mID']+"-waste.png", v['mID'])
+
+        # so the image is downloading and predicting so far. Now need to update the entry in the database
             # time.sleep(5)
 
-    # update the result in database
-    # firebase.put('/Classification/-M3BtYFSQm12iF2X-4Fy', 'Category', 'O')
-    # print('Record updated')
-
-    # threading.Timer(10, foo).start()
+    # threading.Timer(10, fetchImages).start()
 
 
-def predict(filepath):
+def predict(filepath, mID):
     # predict the result
     prediction = model.predict([prepare(filepath)])
     print(filepath + '--->' + CATEGORIES[int(prediction[0][0])])
+    # update the result in database
+    firebase.put('/Classification/' + mID, 'mCategory',
+                 CATEGORIES[int(prediction[0][0])])
+    print('Record updated')
 
 
-foo()
+fetchImages()
