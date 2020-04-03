@@ -20,8 +20,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -30,7 +33,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private StorageTask<UploadTask.TaskSnapshot> mUploadTask;
     private Bitmap bp;
     private String httpUrl, imageUrl;
+    private List<UploadImage> mUploads;
+    String uploadId;
+
 
     String ID = "";
     String Category = "";
@@ -150,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 500);
                             Toast.makeText(MainActivity.this, "Upload successful", Toast.LENGTH_LONG).show();
-                            final String uploadId = mDatabaseRef.push().getKey();
+                            uploadId = mDatabaseRef.push().getKey();
                             imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
                             final UploadImage uploadImage = new UploadImage(uploadId, "", imageUrl);
                             mDatabaseRef.child(uploadId).setValue(uploadImage);
@@ -158,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     httpUrl = uri.toString();
-                                    System.out.println(mDatabaseRef.child(uploadId));
+//                                    System.out.println(mDatabaseRef.child(uploadId));
                                     Map<String, Object> updates = new HashMap<>();
                                     updates.put("mImageUrl", httpUrl);
                                     FirebaseDatabase.getInstance().getReference("Classification").child(uploadId).updateChildren(updates);
@@ -179,6 +187,41 @@ public class MainActivity extends AppCompatActivity {
                             mProgressBar.setProgress((int) progress);
                         }
                     });
+
+            mUploads = new ArrayList<>();
+
+            try {
+                Thread.sleep(10000);
+                mDatabaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            UploadImage mUploadImage = postSnapshot.getValue(UploadImage.class);
+                            mUploads.add(mUploadImage);
+                            if (mUploadImage.getmID().equals(uploadId)) {
+                                if (!mUploadImage.getmCategory().equals("")) {
+                                    System.out.println("ID: " + mUploadImage.getmID() + "\n" + "Image URL: " + mUploadImage.getmImageUrl() + "\n" + "Category: " + mUploadImage.getmCategory());
+                                    Toast.makeText(MainActivity.this, mUploadImage.getmCategory(), Toast.LENGTH_SHORT).show();
+                                    mUploadImage.setmID("");
+                                    mUploadImage.setmImageUrl("");
+                                    mUploadImage.setmCategory("");
+                                    uploadId = "";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
         } else {
             Toast.makeText(MainActivity.this, "Select image", Toast.LENGTH_SHORT).show();
         }
@@ -202,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }, 500);
                             Toast.makeText(MainActivity.this, "Image Upload successful", Toast.LENGTH_LONG).show();
-                            final String uploadId = mDatabaseRef.push().getKey();
+                            uploadId = mDatabaseRef.push().getKey();
                             imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
                             UploadImage uploadImage = new UploadImage(uploadId, "", imageUrl);
                             mDatabaseRef.child(uploadId).setValue(uploadImage);
@@ -210,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     httpUrl = uri.toString();
-                                    System.out.println(mDatabaseRef.child(uploadId));
+//                                    System.out.println(mDatabaseRef.child(uploadId));
                                     Map<String, Object> updates = new HashMap<>();
                                     updates.put("mImageUrl", httpUrl);
                                     FirebaseDatabase.getInstance().getReference("Classification").child(uploadId).updateChildren(updates);
@@ -231,6 +274,42 @@ public class MainActivity extends AppCompatActivity {
                             mProgressBar.setProgress((int) progress);
                         }
                     });
+            mUploads = new ArrayList<>();
+
+            try {
+                Thread.sleep(10000);
+                mDatabaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            UploadImage mUploadImage = postSnapshot.getValue(UploadImage.class);
+                            mUploads.add(mUploadImage);
+                            if (mUploadImage.getmID().equals(uploadId)) {
+                                if (!mUploadImage.getmCategory().equals("")) {
+                                    System.out.println("ID: " + mUploadImage.getmID() + "\n" + "Image URL: " + mUploadImage.getmImageUrl() + "\n" + "Category: " + mUploadImage.getmCategory());
+                                    Toast.makeText(MainActivity.this, mUploadImage.getmCategory(), Toast.LENGTH_SHORT).show();
+
+                                    mUploadImage.setmID("");
+                                    mUploadImage.setmImageUrl("");
+                                    mUploadImage.setmCategory("");
+                                    uploadId = "";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
         } else {
             Toast.makeText(MainActivity.this, "Select image", Toast.LENGTH_SHORT).show();
         }

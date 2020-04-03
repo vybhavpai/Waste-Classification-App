@@ -41,7 +41,7 @@ def fetchImages():
 
     # fetch items
     # waiting because .com url needs to be changed to http url and updated in the firebase db
-    time.sleep(2)
+    time.sleep(4)
     result = firebase.get('/Classification', '')
     for (k, v) in result.items():
         # print(k)
