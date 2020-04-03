@@ -40,6 +40,8 @@ def fetchImages():
     print(time.ctime())
 
     # fetch items
+    # waiting because .com url needs to be changed to http url and updated in the firebase db
+    time.sleep(2)
     result = firebase.get('/Classification', '')
     for (k, v) in result.items():
         # print(k)
@@ -53,16 +55,33 @@ def fetchImages():
             if b:
                 urllib.request.urlretrieve(
                     v['mImageUrl'], v['mID']+"-waste.jpg")
-                predict(v['mID']+"-waste.jpg", v['mID'])
+                # predict(v['mID']+"-waste.jpg", v['mID'])
+                # predict the result
+                prediction = model.predict([prepare(v['mID']+"-waste.jpg")])
+                print(v['mID']+"-waste.jpg" + '--->' +
+                      CATEGORIES[int(prediction[0][0])])
+                # update the result in database
+                firebase.put('/Classification/' + v['mID'], 'mCategory',
+                             CATEGORIES[int(prediction[0][0])])
+                print('Record updated')
             else:
                 urllib.request.urlretrieve(
                     v['mImageUrl'], v['mID']+"-waste.png")
-                predict(v['mID']+"-waste.png", v['mID'])
+                # predict(v['mID']+"-waste.png", v['mID'])
+                # predict the result
+                prediction = model.predict([prepare(v['mID']+"-waste.png")])
+                print(v['mID']+"-waste.jpg" + '--->' +
+                      CATEGORIES[int(prediction[0][0])])
+                # update the result in database
+                firebase.put('/Classification/' + v['mID'], 'mCategory',
+                             CATEGORIES[int(prediction[0][0])])
+                print('Record updated')
 
         # so the image is downloading and predicting so far. Now need to update the entry in the database
-            # time.sleep(5)
+            time.sleep(5)
 
-    # threading.Timer(10, fetchImages).start()
+    # threading.Timer(15, fetchImages).start()
+    fetchImages()
 
 
 def predict(filepath, mID):
