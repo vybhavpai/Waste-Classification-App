@@ -5,3 +5,5 @@
 2. Run `tryModel.py` to train the model using CNN and generate a model (`64x3-CNN.model`)
 
 3. Run `predict-model.py` to predict the image category by passing image path
+
+Dataset can be found [here](https://www.kaggle.com/techsash/waste-classification-data)
