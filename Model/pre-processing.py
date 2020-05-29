@@ -20,7 +20,7 @@ for category in CATEGORIES:
 
 print(img_array.shape)
 
-IMG_SIZE = 70                                 
+IMG_SIZE = 80                                 
 new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
 plt.imshow(new_array, cmap='gray')
 # plt.show()
@@ -33,8 +33,8 @@ def create_training_data():
         class_num = CATEGORIES.index(category)
         for img in os.listdir(path):
             try:
-                img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
-                new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+                img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)
+                new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE), 3)
                 training_data.append([new_array, class_num])
             except Exception as e:
                 pass
@@ -54,7 +54,7 @@ for features, label in training_data:
     X.append(features)
     y.append(label)
 
-X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1) # 1: because it is grayscale
+X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 3) # 1: because it is grayscale
 
 pickle_out = open('X.pickle', 'wb')
 pickle.dump(X, pickle_out)

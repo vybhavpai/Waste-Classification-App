@@ -8,6 +8,11 @@ import tensorflow as tf
 import pickle
 import time
 
+
+# from tensorflow import keras
+# from kerastuner import RandomSearch
+# from kerastuner.engine.hyperparameters import HyperParameters
+
 pickle_in = open("X.pickle", "rb")
 X = pickle.load(pickle_in)
 
@@ -20,6 +25,30 @@ dense_layers = [0]
 layer_sizes = [64]
 conv_layers = [3]
 
+
+# def build(hp):
+#     model = keras.Sequential(
+#         [keras.layers.Conv2D(filters=hp.Int('conv_1_filter', min_value=32, max_value=128, step=16),
+#                              kernel_size=hp.Choice(
+#                                  'conv_1_kernel', values=[3, 5]),
+#                              activation='relu', input_shape=X.shape[1:]),
+#          keras.layers.Conv2D(filters=hp.Int('conv_2_filter', min_value=32, max_value=64, step=16),
+#                              kernel_size=hp.Choice(
+#                                  'conv_2_kernel', values=[3, 5]),
+#                              activation='relu'),
+#          keras.layers.Flatten(),
+#          keras.layers.Dense(units=hp.Int('dense_1_units', min_value=32, max_value=128, step=16),
+#                             activation='relu'),
+#          keras.layers.Dense(10, activation='softmax')])
+
+#     model.compile(optimizer=keras.optimizers.Adam(hp.Choice('learning_rate', values=[1e-2, 1e-3])),
+#                   loss='sparse_categorical_crossentropy',
+#                   metrics=['accuracy'])
+
+#     return model
+
+
+# def train():
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
         for conv_layer in conv_layers:
@@ -54,13 +83,20 @@ for dense_layer in dense_layers:
             opt = tf.keras.optimizers.Adam(learning_rate=0.001)
 
             model.compile(loss='binary_crossentropy',
-                          optimizer=opt,
-                          metrics=['accuracy'])
+                            optimizer=opt,
+                            metrics=['accuracy'])
 
             model.fit(X, y,
-                      batch_size=32,
-                      epochs=10,
-                      validation_split=0.2,
-                      callbacks=[tensorboard])
+                        batch_size=32,
+                        epochs=10,
+                        validation_split=0.2,
+                        callbacks=[tensorboard])
 
 model.save('64x3-CNN.model')
+
+
+# tuner_search = RandomSearch(build,
+#                             objective='val_acc',
+#                             max_trials=5, directory='output', project_name="Waste Classifier")
+
+# tuner_search.search(X, y, epochs=3, validation_split=0.1)

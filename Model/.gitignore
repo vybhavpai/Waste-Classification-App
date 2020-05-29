@@ -2,3 +2,7 @@
 *.jpg
 TRAIN
 TEST
+*.model
+*.h5
+*.hdf5
+*.pickle
