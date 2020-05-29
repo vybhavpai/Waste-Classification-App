@@ -60,7 +60,7 @@ for dense_layer in dense_layers:
             model.fit(X, y,
                       batch_size=32,
                       epochs=10,
-                      validation_split=0.3,
+                      validation_split=0.2,
                       callbacks=[tensorboard])
 
 model.save('64x3-CNN.model')
