@@ -12,7 +12,7 @@ CATEGORIES = ['O', 'R']
 for category in CATEGORIES:
     path = os.path.join(DATADIR, category) # path to O or R dir
     for img in os.listdir(path):
-        img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
+        img_array = cv2.imread(os.path.join(path, img))
         plt.imshow(img_array, cmap='gray')
         # plt.show()
         break
@@ -20,7 +20,7 @@ for category in CATEGORIES:
 
 print(img_array.shape)
 
-IMG_SIZE = 80                                 
+IMG_SIZE = 100                             
 new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
 plt.imshow(new_array, cmap='gray')
 # plt.show()
