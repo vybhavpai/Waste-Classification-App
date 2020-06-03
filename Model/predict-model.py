@@ -11,7 +11,7 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 3)
 
 
-model = tf.keras.models.load_model("64x3-CNN.model")
+model = tf.keras.models.load_model("64x3-CNN.model") # here you can use 64 or 128
 
 print('\nPrediction 1: Image from R folder:\n')
 prediction = model.predict([prepare('/home/shrinidhi/Desktop/sem6/Waste-Classification-App/Model/TEST/R/R_10005.jpg')])
