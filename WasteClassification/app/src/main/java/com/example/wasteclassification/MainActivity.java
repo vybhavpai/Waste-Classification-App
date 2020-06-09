@@ -16,6 +16,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private String httpUrl, imageUrl;
     private List<UploadImage> mUploads;
     String uploadId;
+    TextView textView_category;
 
 
     String ID = "";
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpload = findViewById(R.id.btnUpload);
         imgCapture = findViewById(R.id.capturedImage);
         mProgressBar = findViewById(R.id.progressBar);
+        textView_category = findViewById(R.id.text_view_category);
         mStorageRef = FirebaseStorage.getInstance().getReference("images");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Classification");
         btnCapture.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         btnFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 dispatchGalleryIntent();
             }
         });
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(MainActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
+                    textView_category.setText("");
                     if (imageUri != null) {
                         uploadFile();
                     } else if (bp != null) {
@@ -202,6 +207,10 @@ public class MainActivity extends AppCompatActivity {
                                 if (!mUploadImage.getmCategory().equals("")) {
                                     System.out.println("ID: " + mUploadImage.getmID() + "\n" + "Image URL: " + mUploadImage.getmImageUrl() + "\n" + "Category: " + mUploadImage.getmCategory());
                                     Toast.makeText(MainActivity.this, mUploadImage.getmCategory(), Toast.LENGTH_SHORT).show();
+                                    if (mUploadImage.getmCategory().equals("O"))
+                                        textView_category.setText("Category: Organic");
+                                    if (mUploadImage.getmCategory().equals("R"))
+                                        textView_category.setText("Category: Recyclable");
                                     mUploadImage.setmID("");
                                     mUploadImage.setmImageUrl("");
                                     mUploadImage.setmCategory("");
@@ -288,7 +297,10 @@ public class MainActivity extends AppCompatActivity {
                                 if (!mUploadImage.getmCategory().equals("")) {
                                     System.out.println("ID: " + mUploadImage.getmID() + "\n" + "Image URL: " + mUploadImage.getmImageUrl() + "\n" + "Category: " + mUploadImage.getmCategory());
                                     Toast.makeText(MainActivity.this, mUploadImage.getmCategory(), Toast.LENGTH_SHORT).show();
-
+                                    if (mUploadImage.getmCategory().equals("O"))
+                                        textView_category.setText("Category: Organic");
+                                    if (mUploadImage.getmCategory().equals("R"))
+                                        textView_category.setText("Category: Recyclable");
                                     mUploadImage.setmID("");
                                     mUploadImage.setmImageUrl("");
                                     mUploadImage.setmCategory("");

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        android:layout_weight="85" />
+        android:layout_weight="75" />
 
     <LinearLayout
         android:id="@+id/buttonLayout"
@@ -56,4 +56,13 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="5" />
+
+    <TextView
+        android:id="@+id/text_view_category"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:hint="Category: "
+        android:textColor="#000000" />
 </LinearLayout>
