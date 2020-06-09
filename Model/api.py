@@ -29,7 +29,7 @@ def prepare(filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 3)
 
 
-model = tf.keras.models.load_model("128x3-CNN-no-aug.hdf5")
+model = tf.keras.models.load_model("128x3-CNN-aug.hdf5")
 
 
 
