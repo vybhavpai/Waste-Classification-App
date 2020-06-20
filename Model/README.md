@@ -8,4 +8,6 @@
 
 Dataset can be found [here](https://www.kaggle.com/techsash/waste-classification-data)
 
-### _Refer to data-aug-latest-model.ipynb by either rendering it on GitHub or cloning the repository and viewing the same on a local jupyter notebook. This file has the latest model with better testing and cross-validation accuracy._
+Or
+
+Checkout the notebook (.ipynb file).
