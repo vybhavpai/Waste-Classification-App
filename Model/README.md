@@ -1,13 +1,23 @@
-### Steps to be followed:
+### Dataset
+Dataset can be found [here](https://www.kaggle.com/techsash/waste-classification-data "Dataset reference"). The dataset has the following structure:
+```bash
+├── DATASET/
+│   ├── TEST/
+│   │   ├── O/
+│   │   └── R/
+│   ├── TRAIN/
+│   │   ├── O/
+│   │   └── R/
+|   └──
+└── 
+```
 
-1. Run `pre-processing.py` to do pre-processing of data and get the X (training features) and y (label) parameters
+### Getting started
+* Download the dataset
+* Pre-processing the data present in the dataset
+* Training a neural network model on the pre-processed data and saving the best model
+* Loading the saved model and predicting results
+* Making use of the [API](api.py) to classify images sent from the android application
 
-2. Run `tryModel.py` to train the model using CNN and generate a model (`64x3-CNN.model`)
-
-3. Run `predict-model.py` to predict the image category by passing image path
-
-Dataset can be found [here](https://www.kaggle.com/techsash/waste-classification-data)
-
-Or
-
-Checkout the notebook (.ipynb file).
+### Getting started
+For detailed explanation kindly checkout [```waste-classification.ipynb```](waste-classification.ipynb "iPython notebook"). The notebook contains data pre-processing, training a neural network and testing it using some more images present in the test dataset.
